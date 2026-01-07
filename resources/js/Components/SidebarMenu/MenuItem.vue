@@ -15,13 +15,18 @@
         <component 
           v-if="item.icon" 
           :is="getIconComponent(item.icon)" 
-          class="h-5 w-5 flex-shrink-0"
+          :class="[
+            'h-5 w-5 flex-shrink-0',
+            item.active 
+              ? 'text-white' 
+              : 'text-gray-600 dark:text-gray-400'
+          ]"
         />
         <span v-if="!isCollapsed" class="truncate">{{ item.label }}</span>
       </div>
       <ChevronDownIcon
         v-if="!isCollapsed && item.children"
-        class="h-4 w-4 flex-shrink-0 transition-transform"
+        class="h-4 w-4 flex-shrink-0 transition-transform text-gray-600 dark:text-gray-400"
         :class="{ 'rotate-180': isExpanded }"
       />
     </button>
@@ -41,7 +46,12 @@
       <component 
         v-if="item.icon" 
         :is="getIconComponent(item.icon)" 
-        class="h-5 w-5 flex-shrink-0"
+        :class="[
+          'h-5 w-5 flex-shrink-0',
+          item.active 
+            ? 'text-white' 
+            : 'text-gray-600 dark:text-gray-400'
+        ]"
       />
       <span v-if="!isCollapsed" class="truncate">{{ item.label }}</span>
     </a>

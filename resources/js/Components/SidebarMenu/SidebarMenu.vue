@@ -22,12 +22,12 @@
         </div>
         <button
           @click="toggleSidebar"
-          class="toggle-button p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex-shrink-0"
+          class="toggle-button p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex-shrink-0 text-gray-600 dark:text-gray-400"
           :title="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
         >
           <component 
             :is="isCollapsed ? ChevronRightIcon : ChevronLeftIcon" 
-            class="h-5 w-5 text-gray-600 dark:text-gray-400"
+            class="h-5 w-5"
           />
         </button>
       </div>
@@ -35,7 +35,7 @@
       <!-- Search Bar -->
       <div v-if="!isCollapsed" class="search-section border-b border-gray-200 dark:border-gray-800 p-3">
         <div class="relative">
-          <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
           <input
             v-model="searchQuery"
             type="text"
@@ -45,7 +45,7 @@
           <button
             v-if="searchQuery"
             @click="clearSearch"
-            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
           >
             <XMarkIcon class="h-5 w-5" />
           </button>
@@ -62,7 +62,7 @@
           <div v-if="searchQuery && filteredItems.length === 0" class="p-4 text-center">
             <MagnifyingGlassIcon class="h-10 w-10 text-gray-400 dark:text-gray-600 mx-auto mb-2" />
             <p class="text-sm text-gray-500 dark:text-gray-400">No menu items found</p>
-            <button @click="clearSearch" class="mt-2 text-xs text-ciba-green hover:underline">
+            <button @click="clearSearch" class="mt-2 text-xs text-ciba-green dark:text-ciba-green hover:underline dark:hover:text-ciba-green/80 transition-colors">
               Clear search
             </button>
           </div>
@@ -354,6 +354,15 @@ defineExpose({
 
 .menu-scroll-container::-webkit-scrollbar-thumb:hover {
   background: rgba(156, 163, 175, 0.5);
+}
+
+/* Dark mode scrollbar */
+.dark .menu-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(75, 85, 99, 0.5);
+}
+
+.dark .menu-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(75, 85, 99, 0.7);
 }
 
 .toggle-button {

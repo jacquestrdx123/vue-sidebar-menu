@@ -18,7 +18,12 @@
           <component 
             v-if="item.icon" 
             :is="getIconComponent(item.icon)" 
-            class="h-5 w-5 flex-shrink-0"
+            :class="[
+              'h-5 w-5 flex-shrink-0',
+              item.active 
+                ? 'text-white' 
+                : 'text-gray-600 dark:text-gray-400'
+            ]"
           />
           <span class="truncate">{{ item.label }}</span>
         </a>
