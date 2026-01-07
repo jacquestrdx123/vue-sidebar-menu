@@ -43,6 +43,13 @@ class InstallCommand extends Command
             '--force' => $this->option('force'),
         ]);
 
+        // Publish icon mapper utility
+        $this->info('Publishing icon mapper utility...');
+        $this->call('vendor:publish', [
+            '--tag' => 'vue-sidebar-menu-utils',
+            '--force' => $this->option('force'),
+        ]);
+
         // Publish config
         $this->info('Publishing config file...');
         $this->call('vendor:publish', [
@@ -60,9 +67,10 @@ class InstallCommand extends Command
         $this->newLine();
         $this->info('Next steps:');
         $this->line('1. Run migrations: php artisan migrate');
-        $this->line('2. Include <SidebarMenu /> component in your layout');
-        $this->line('3. Share menu data via Inertia: Inertia::share(\'menu\', $menuWebService->getMenu())');
-        $this->line('4. (Optional) Add HasFavoriteMenuItems trait to your User model');
+        $this->line('2. Install @heroicons/vue: npm install @heroicons/vue');
+        $this->line('3. Share menu data via Inertia middleware (see README for details)');
+        $this->line('4. Include <SidebarMenu /> component in your layout');
+        $this->line('5. (Optional) Remove Material Icons from your CSS if no longer needed');
 
         return Command::SUCCESS;
     }

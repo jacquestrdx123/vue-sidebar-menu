@@ -15,9 +15,11 @@
               : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800',
           ]"
         >
-          <span v-if="item.icon" class="material-icons text-lg flex-shrink-0">
-            {{ item.icon }}
-          </span>
+          <component 
+            v-if="item.icon" 
+            :is="getIconComponent(item.icon)" 
+            class="h-5 w-5 flex-shrink-0"
+          />
           <span class="truncate">{{ item.label }}</span>
         </a>
       </li>
@@ -28,6 +30,7 @@
 <script setup>
 import { computed } from 'vue'
 import { usePage } from '@inertiajs/vue3'
+import { getIconComponent } from '../../utils/iconMapper.js'
 
 const props = defineProps({
   isCollapsed: {
@@ -54,18 +57,5 @@ const handleClick = (item) => {
 </script>
 
 <style scoped>
-.material-icons {
-  font-family: 'Material Icons';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  display: inline-block;
-  line-height: 1;
-  text-transform: none;
-  letter-spacing: normal;
-  word-wrap: normal;
-  white-space: nowrap;
-  direction: ltr;
-}
 </style>
 

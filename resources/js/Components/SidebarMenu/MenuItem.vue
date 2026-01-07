@@ -12,18 +12,18 @@
       ]"
     >
       <div class="flex items-center gap-3 flex-1 min-w-0">
-        <span v-if="item.icon" class="material-icons text-lg flex-shrink-0">
-          {{ item.icon }}
-        </span>
+        <component 
+          v-if="item.icon" 
+          :is="getIconComponent(item.icon)" 
+          class="h-5 w-5 flex-shrink-0"
+        />
         <span v-if="!isCollapsed" class="truncate">{{ item.label }}</span>
       </div>
-      <span
+      <ChevronDownIcon
         v-if="!isCollapsed && item.children"
-        class="material-icons text-sm flex-shrink-0 transition-transform"
+        class="h-4 w-4 flex-shrink-0 transition-transform"
         :class="{ 'rotate-180': isExpanded }"
-      >
-        expand_more
-      </span>
+      />
     </button>
 
     <a
@@ -38,9 +38,11 @@
           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800',
       ]"
     >
-      <span v-if="item.icon" class="material-icons text-lg flex-shrink-0">
-        {{ item.icon }}
-      </span>
+      <component 
+        v-if="item.icon" 
+        :is="getIconComponent(item.icon)" 
+        class="h-5 w-5 flex-shrink-0"
+      />
       <span v-if="!isCollapsed" class="truncate">{{ item.label }}</span>
     </a>
 
@@ -64,7 +66,8 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import MenuItem from './MenuItem.vue'
+import { ChevronDownIcon } from '@heroicons/vue/24/outline'
+import { getIconComponent } from '../../utils/iconMapper.js'
 
 const props = defineProps({
   item: {
@@ -133,18 +136,5 @@ const handleClick = () => {
   opacity: 0;
 }
 
-.material-icons {
-  font-family: 'Material Icons';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  display: inline-block;
-  line-height: 1;
-  text-transform: none;
-  letter-spacing: normal;
-  word-wrap: normal;
-  white-space: nowrap;
-  direction: ltr;
-}
 </style>
 

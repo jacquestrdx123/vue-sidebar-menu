@@ -25,31 +25,29 @@
           class="toggle-button p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex-shrink-0"
           :title="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
         >
-          <span class="material-icons text-gray-600 dark:text-gray-400">
-            {{ isCollapsed ? 'chevron_right' : 'chevron_left' }}
-          </span>
+          <component 
+            :is="isCollapsed ? ChevronRightIcon : ChevronLeftIcon" 
+            class="h-5 w-5 text-gray-600 dark:text-gray-400"
+          />
         </button>
       </div>
 
       <!-- Search Bar -->
       <div v-if="!isCollapsed" class="search-section border-b border-gray-200 dark:border-gray-800 p-3">
         <div class="relative">
-          <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">
-            search
-          </span>
+          <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Search menu..."
             class="w-full pl-10 pr-10 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-ciba-green focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500"
-            style="padding-left: 2.75rem !important;"
           />
           <button
             v-if="searchQuery"
             @click="clearSearch"
             class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
           >
-            <span class="material-icons text-lg">close</span>
+            <XMarkIcon class="h-5 w-5" />
           </button>
         </div>
       </div>
@@ -62,7 +60,7 @@
           
           <!-- No Results Message -->
           <div v-if="searchQuery && filteredItems.length === 0" class="p-4 text-center">
-            <span class="material-icons text-gray-400 dark:text-gray-600 text-4xl mb-2">search_off</span>
+            <MagnifyingGlassIcon class="h-10 w-10 text-gray-400 dark:text-gray-600 mx-auto mb-2" />
             <p class="text-sm text-gray-500 dark:text-gray-400">No menu items found</p>
             <button @click="clearSearch" class="mt-2 text-xs text-ciba-green hover:underline">
               Clear search
@@ -101,6 +99,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import { usePage, router } from '@inertiajs/vue3'
+import { ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { useSidebar } from './composables/useSidebar.js'
 import MenuItem from './MenuItem.vue'
 import ExpandedFavoriteChildren from './ExpandedFavoriteChildren.vue'
@@ -393,20 +392,6 @@ defineExpose({
 .overlay-enter-from,
 .overlay-leave-to {
   opacity: 0;
-}
-
-.material-icons {
-  font-family: 'Material Icons';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  display: inline-block;
-  line-height: 1;
-  text-transform: none;
-  letter-spacing: normal;
-  word-wrap: normal;
-  white-space: nowrap;
-  direction: ltr;
 }
 
 /* Responsive */
