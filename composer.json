@@ -2,7 +2,7 @@
     "name": "jacquestrdx123/vue-sidebar-menu",
     "description": "A Laravel package providing a database-driven sidebar menu system with Vue 3 components",
     "type": "library",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "license": "MIT",
     "authors": [
         {
