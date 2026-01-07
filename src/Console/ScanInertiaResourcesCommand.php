@@ -107,19 +107,39 @@ class ScanInertiaResourcesCommand extends Command
             return $resources;
         }
 
+        // Use allFiles() which already recursively scans directories
         $files = File::allFiles($basePath);
 
         foreach ($files as $file) {
-            $relativePath = str_replace([$basePath, '.php'], '', $file->getPathname());
-            $relativePath = str_replace('/', '\\', trim($relativePath, '/\\'));
+            // Skip non-PHP files
+            if ($file->getExtension() !== 'php') {
+                continue;
+            }
+
+            // Get relative path from base path
+            $relativePath = str_replace($basePath . DIRECTORY_SEPARATOR, '', $file->getPathname());
+            
+            // Remove .php extension
+            $relativePath = str_replace('.php', '', $relativePath);
+            
+            // Convert directory separators to namespace separators
+            $relativePath = str_replace(DIRECTORY_SEPARATOR, '\\', $relativePath);
+            
+            // Build full class name
             $className = $namespace . '\\' . $relativePath;
 
+            // Try to autoload the class
             if (!class_exists($className)) {
                 continue;
             }
 
             try {
                 $reflection = new \ReflectionClass($className);
+                
+                // Skip if not instantiable (abstract, interface, trait)
+                if (!$reflection->isInstantiable() && !$reflection->isClass()) {
+                    continue;
+                }
                 
                 // Check if class extends InertiaResource
                 if ($this->extendsInertiaResource($reflection)) {
