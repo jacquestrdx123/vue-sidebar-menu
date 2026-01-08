@@ -7,13 +7,13 @@
         'sidebar',
         'sidebar-desktop',
         isCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded',
-        'bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300',
+        'bg-sidebar dark:bg-sidebar-dark border-r border-gray-200 dark:border-gray-700 transition-all duration-300',
         isCollapsed ? 'w-16' : 'w-[250px]'
       ]"
       :data-collapsed="isCollapsed"
     >
       <!-- Branding Section -->
-      <div class="branding-section border-b border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center justify-between">
+      <div class="branding-section border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
         <div class="branding-logo flex items-center gap-3 overflow-hidden">
           <img 
             v-if="logoUrl"
@@ -24,7 +24,7 @@
         </div>
         <button
           @click="toggleSidebar"
-          class="toggle-button p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex-shrink-0 text-gray-600 dark:text-gray-400"
+          class="toggle-button p-2 hover:bg-hover dark:hover:bg-hover-dark rounded-lg transition-colors flex-shrink-0 text-text-secondary-variant dark:text-text-secondary-variant"
           :title="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
         >
           <component 
@@ -35,14 +35,14 @@
       </div>
 
       <!-- Search Bar -->
-      <div v-if="!isCollapsed" class="search-section border-b border-gray-200 dark:border-gray-800 p-3">
+      <div v-if="!isCollapsed" class="search-section border-b border-gray-200 dark:border-gray-700 p-3">
         <div class="relative">
           <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Search menu..."
-            class="w-full pl-10 pr-10 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-ciba-green focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500"
+            class="w-full pl-10 pr-10 py-2 text-sm bg-input dark:bg-input-dark border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-text-on-card dark:text-text-on-card-dark placeholder-gray-500 dark:placeholder-gray-400"
           />
           <button
             v-if="searchQuery"
@@ -91,10 +91,10 @@
     <Transition name="slide-drawer">
       <aside
         v-if="isMobile && isMobileMenuOpen"
-        class="sidebar sidebar-mobile bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 w-[250px] z-40"
+        class="sidebar sidebar-mobile bg-sidebar dark:bg-sidebar-dark border-r border-gray-200 dark:border-gray-700 w-[250px] z-50"
       >
         <!-- Branding Section -->
-        <div class="branding-section border-b border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center justify-between">
+        <div class="branding-section border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
           <div class="branding-logo flex items-center gap-3 overflow-hidden">
             <img 
               v-if="logoUrl"
@@ -105,7 +105,7 @@
           </div>
           <button
             @click="closeMobileMenu"
-            class="close-button p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex-shrink-0 text-gray-600 dark:text-gray-400"
+            class="close-button p-2 hover:bg-hover dark:hover:bg-hover-dark rounded-lg transition-colors flex-shrink-0 text-text-secondary-variant dark:text-text-secondary-variant"
             title="Close menu"
           >
             <XMarkIcon class="h-5 w-5" />
@@ -113,14 +113,14 @@
         </div>
 
         <!-- Search Bar -->
-        <div class="search-section border-b border-gray-200 dark:border-gray-800 p-3">
+        <div class="search-section border-b border-gray-200 dark:border-gray-700 p-3">
           <div class="relative">
             <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
             <input
               v-model="searchQuery"
               type="text"
               placeholder="Search menu..."
-              class="w-full pl-10 pr-10 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-ciba-green focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500"
+              class="w-full pl-10 pr-10 py-2 text-sm bg-input dark:bg-input-dark border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-text-on-card dark:text-text-on-card-dark placeholder-gray-500 dark:placeholder-gray-400"
             />
             <button
               v-if="searchQuery"
@@ -171,7 +171,7 @@
       <div
         v-if="isMobile && isMobileMenuOpen"
         @click="closeMobileMenu"
-        class="mobile-overlay fixed inset-0 bg-black bg-opacity-50 z-30"
+        class="mobile-overlay fixed inset-0 bg-black bg-opacity-50 z-40"
       />
     </Transition>
   </div>
@@ -220,6 +220,7 @@ const items = computed(() => {
       key: childKey,
       label: childValue.label ?? childValue.title ?? '',
       icon: childValue.icon ?? null,
+      route: childValue.route ?? null,
       url: childValue.url ?? childValue.href ?? '#',
       active: childValue.active ?? false,
       children: childValue.children ? processChildren(childValue.children) : null,
@@ -234,6 +235,7 @@ const items = computed(() => {
       key: item.key,
       label: item.label ?? item.title ?? '',
       icon: item.icon ?? 'folder',
+      route: item.route ?? null,
       url: item.url ?? item.href ?? '#',
       active: item.active ?? false,
       children: item.children ? processChildren(item.children) : null,
@@ -290,9 +292,28 @@ const clearSearch = () => {
 }
 
 const onSelect = (item) => {
-  if (item && item.url && item.url !== '#') {
+  if (!item) {
+    return
+  }
+
+  // Prioritize route over URL
+  if (item.route && item.route !== '#' && typeof route === 'function') {
+    try {
+      // Convert route name to URL using Ziggy
+      const routeUrl = route(item.route)
+      if (routeUrl) {
+        router.visit(routeUrl)
+      }
+    } catch (e) {
+      // If route doesn't exist, fall back to URL
+      if (item.url && item.url !== '#') {
+        router.visit(item.url)
+      }
+    }
+  } else if (item.url && item.url !== '#') {
     router.visit(item.url)
   }
+
   // Close mobile menu after selection
   if (isMobile.value) {
     isMobileMenuOpen.value = false
@@ -305,10 +326,18 @@ const toggleSidebar = () => {
 
 const openMobileMenu = () => {
   isMobileMenuOpen.value = true
+  // Prevent body scroll when menu is open
+  if (typeof document !== 'undefined') {
+    document.body.style.overflow = 'hidden'
+  }
 }
 
 const closeMobileMenu = () => {
   isMobileMenuOpen.value = false
+  // Restore body scroll when menu is closed
+  if (typeof document !== 'undefined') {
+    document.body.style.overflow = ''
+  }
 }
 
 const persistScrollPosition = () => {
@@ -355,6 +384,11 @@ onBeforeUnmount(() => {
   if (scrollContainer.value) {
     scrollContainer.value.removeEventListener('scroll', persistScrollPosition)
   }
+  
+  // Ensure body scroll is restored
+  if (typeof document !== 'undefined') {
+    document.body.style.overflow = ''
+  }
 })
 
 const checkMobile = () => {
@@ -388,6 +422,10 @@ const handleResize = () => {
 watch(
   () => page.url,
   () => {
+    // Close mobile menu on navigation
+    if (isMobile.value && isMobileMenuOpen.value) {
+      closeMobileMenu()
+    }
     nextTick(() => {
       restoreScrollPosition()
     })
@@ -417,6 +455,10 @@ defineExpose({
   z-index: 40;
   display: flex;
   flex-direction: column;
+}
+
+.sidebar-mobile {
+  z-index: 50;
 }
 
 .sidebar-expanded {
