@@ -1,9 +1,11 @@
 <template>
   <div class="sidebar-menu-container">
-    <!-- Sidebar -->
+    <!-- Desktop Sidebar -->
     <aside
+      v-if="!isMobile"
       :class="[
         'sidebar',
+        'sidebar-desktop',
         isCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded',
         'bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300',
         isCollapsed ? 'w-16' : 'w-[250px]'
@@ -85,12 +87,91 @@
       </nav>
     </aside>
 
+    <!-- Mobile Sidebar Drawer -->
+    <Transition name="slide-drawer">
+      <aside
+        v-if="isMobile && isMobileMenuOpen"
+        class="sidebar sidebar-mobile bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 w-[250px] z-40"
+      >
+        <!-- Branding Section -->
+        <div class="branding-section border-b border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center justify-between">
+          <div class="branding-logo flex items-center gap-3 overflow-hidden">
+            <img 
+              v-if="logoUrl"
+              :src="logoUrl" 
+              :alt="logoAlt" 
+              class="flex-shrink-0 h-10 w-10 object-contain"
+            />
+          </div>
+          <button
+            @click="closeMobileMenu"
+            class="close-button p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex-shrink-0 text-gray-600 dark:text-gray-400"
+            title="Close menu"
+          >
+            <XMarkIcon class="h-5 w-5" />
+          </button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-section border-b border-gray-200 dark:border-gray-800 p-3">
+          <div class="relative">
+            <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search menu..."
+              class="w-full pl-10 pr-10 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-ciba-green focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500"
+            />
+            <button
+              v-if="searchQuery"
+              @click="clearSearch"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            >
+              <XMarkIcon class="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+
+        <!-- Menu Items -->
+        <nav class="menu-nav">
+          <div ref="scrollContainer" class="menu-scroll-container">
+            <!-- Expanded Favorite Children -->
+            <ExpandedFavoriteChildren :is-collapsed="false" @select="onSelect" />
+            
+            <!-- No Results Message -->
+            <div v-if="searchQuery && filteredItems.length === 0" class="p-4 text-center">
+              <MagnifyingGlassIcon class="h-10 w-10 text-gray-400 dark:text-gray-600 mx-auto mb-2" />
+              <p class="text-sm text-gray-500 dark:text-gray-400">No menu items found</p>
+              <button @click="clearSearch" class="mt-2 text-xs text-ciba-green dark:text-ciba-green hover:underline dark:hover:text-ciba-green/80 transition-colors">
+                Clear search
+              </button>
+            </div>
+            
+            <!-- Menu Items -->
+            <ul v-else class="space-y-1 p-2">
+              <template v-for="item in filteredItems" :key="item.key">
+                <li>
+                  <!-- Top Level Item -->
+                  <MenuItem
+                    :item="item"
+                    :level="1"
+                    :is-collapsed="false"
+                    @select="onSelect"
+                  />
+                </li>
+              </template>
+            </ul>
+          </div>
+        </nav>
+      </aside>
+    </Transition>
+
     <!-- Mobile Overlay -->
     <Transition name="overlay">
       <div
-        v-if="isMobileMenuOpen"
+        v-if="isMobile && isMobileMenuOpen"
         @click="closeMobileMenu"
-        class="mobile-overlay fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+        class="mobile-overlay fixed inset-0 bg-black bg-opacity-50 z-30"
       />
     </Transition>
   </div>
@@ -121,6 +202,7 @@ const isMobileMenuOpen = ref(false)
 const searchQuery = ref('')
 const scrollContainer = ref(null)
 const SCROLL_STORAGE_KEY = 'vue-admin-sidebar-scroll'
+const isMobile = ref(false)
 
 const items = computed(() => {
   // Use the 'menu' prop from MenuWebService (static menu definition)
@@ -212,13 +294,17 @@ const onSelect = (item) => {
     router.visit(item.url)
   }
   // Close mobile menu after selection
-  if (window.innerWidth < 1024) {
+  if (isMobile.value) {
     isMobileMenuOpen.value = false
   }
 }
 
 const toggleSidebar = () => {
   toggle()
+}
+
+const openMobileMenu = () => {
+  isMobileMenuOpen.value = true
 }
 
 const closeMobileMenu = () => {
@@ -250,6 +336,7 @@ const restoreScrollPosition = () => {
 
 // Load saved preference on mount
 onMounted(() => {
+  checkMobile()
   loadSidebarState()
 
   restoreScrollPosition()
@@ -270,8 +357,28 @@ onBeforeUnmount(() => {
   }
 })
 
+const checkMobile = () => {
+  const wasMobile = isMobile.value
+  isMobile.value = window.innerWidth < 1024
+  
+  // If switching from mobile to desktop, close mobile menu
+  if (wasMobile && !isMobile.value) {
+    isMobileMenuOpen.value = false
+  }
+  
+  if (isMobile.value) {
+    // On mobile, ensure sidebar state is reset
+    if (!isMobileMenuOpen.value) {
+      isCollapsed.value = true
+      document.body.classList.add('sidebar-collapsed')
+      document.body.classList.remove('sidebar-expanded')
+    }
+  }
+}
+
 const handleResize = () => {
-  if (window.innerWidth < 1024) {
+  checkMobile()
+  if (!isMobile.value && window.innerWidth < 1024) {
     isCollapsed.value = true
     document.body.classList.add('sidebar-collapsed')
     document.body.classList.remove('sidebar-expanded')
@@ -290,7 +397,10 @@ watch(
 // Expose toggle function for parent components
 defineExpose({
   toggleSidebar,
-  isCollapsed
+  isCollapsed,
+  openMobileMenu,
+  closeMobileMenu,
+  isMobileMenuOpen
 })
 </script>
 
@@ -403,15 +513,30 @@ defineExpose({
   opacity: 0;
 }
 
-/* Responsive */
-@media (max-width: 1023px) {
-  .sidebar {
-    transform: translateX(-100%);
-  }
-  
-  .sidebar.mobile-open {
-    transform: translateX(0);
-  }
+/* Mobile Drawer Animation */
+.slide-drawer-enter-active,
+.slide-drawer-leave-active {
+  transition: transform 0.3s ease;
+}
+
+.slide-drawer-enter-from {
+  transform: translateX(-100%);
+}
+
+.slide-drawer-leave-to {
+  transform: translateX(-100%);
+}
+
+.sidebar-mobile {
+  transform: translateX(0);
+}
+
+.close-button {
+  opacity: 0.7;
+}
+
+.close-button:hover {
+  opacity: 1;
 }
 </style>
 
