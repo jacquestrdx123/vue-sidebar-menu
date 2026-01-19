@@ -28,7 +28,7 @@ A Laravel Composer package providing a database-driven sidebar menu system with 
 composer require jacquestredoux/vue-sidebar-menu
 ```
 
-2. Install Heroicons (required dependency):
+2. Install Heroicons (required dependency unless skipping Vue publish):
 
 ```bash
 npm install @heroicons/vue
@@ -40,11 +40,17 @@ npm install @heroicons/vue
 php artisan vue-sidebar-menu:install
 ```
 
+If you want to skip publishing Vue components and JS utilities:
+
+```bash
+php artisan vue-sidebar-menu:install --no-vue
+```
+
 This will:
 
 - Publish migrations to `database/migrations/`
-- Publish Vue components to `resources/js/Components/SidebarMenu/`
-- Publish icon mapper utility to `resources/js/utils/iconMapper.js`
+- Publish Vue components to `resources/js/Components/SidebarMenu/` (unless `--no-vue`)
+- Publish icon mapper utility to `resources/js/utils/iconMapper.js` (unless `--no-vue`)
 - Publish config file to `config/vue-sidebar-menu.php`
 
 4. Run migrations:
